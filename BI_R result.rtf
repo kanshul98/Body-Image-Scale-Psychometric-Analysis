@@ -1,0 +1,998 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2761
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww28600\viewh14780\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 R version 4.4.2 (2024-10-31) -- "Pile of Leaves"\
+Copyright (C) 2024 The R Foundation for Statistical Computing\
+Platform: aarch64-apple-darwin20\
+\
+R is free software and comes with ABSOLUTELY NO WARRANTY.\
+You are welcome to redistribute it under certain conditions.\
+Type 'license()' or 'licence()' for distribution details.\
+\
+  Natural language support but running in an English locale\
+\
+R is a collaborative project with many contributors.\
+Type 'contributors()' for more information and\
+'citation()' on how to cite R or R packages in publications.\
+\
+Type 'demo()' for some demos, 'help()' for on-line help, or\
+'help.start()' for an HTML browser interface to help.\
+Type 'q()' to quit R.\
+\
+> library(writexl)\
+> library(tidyverse)\
+\uc0\u9472 \u9472  Attaching core tidyverse packages \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472  tidyverse 2.0.0 \u9472 \u9472 \
+\uc0\u10004  dplyr     1.1.4     \u10004  readr     2.1.5\
+\uc0\u10004  forcats   1.0.0     \u10004  stringr   1.5.1\
+\uc0\u10004  ggplot2   3.5.1     \u10004  tibble    3.2.1\
+\uc0\u10004  lubridate 1.9.3     \u10004  tidyr     1.3.1\
+\uc0\u10004  purrr     1.0.2     \
+\uc0\u9472 \u9472  Conflicts \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472  tidyverse_conflicts() \u9472 \u9472 \
+\uc0\u10006  dplyr::filter() masks stats::filter()\
+\uc0\u10006  dplyr::lag()    masks stats::lag()\
+\uc0\u8505  Use the conflicted package to force all conflicts to become errors\
+> bi_scale <- write_xlsx("/Users/anshulkandpal/Downloads/BI_7_items_for_analysis.xlsx")\
+Error in write_xlsx("/Users/anshulkandpal/Downloads/BI_7_items_for_analysis.xlsx") : \
+  Argument x must be a data frame or list of data frames\
+> write_xlsx(bi_scale, "/Users/anshulkandpal/Downloads/BI_7_items_for_analysis.xlsx")\
+Error: object 'bi_scale' not found\
+> library(readxl)\
+> bi_scale <- read_excel("/Users/anshulkandpal/Downloads/BI_7_items_for_analysis.xlsx")\
+                                                                                                             \
+> view(bi_scale)\
+> unique(bi_scale$q1)\
+[1] "AGREE"                     "STRONGLY AGREE"            "NEITHER AGREE OR DISAGREE"\
+[4] "DISAGREE"                  "STRONGLY DISAGREE"        \
+> str(bi_scale)\
+tibble [302 \'d7 7] (S3: tbl_df/tbl/data.frame)\
+ $ q1: chr [1:302] "AGREE" "STRONGLY AGREE" "AGREE" "AGREE" ...\
+ $ q2: chr [1:302] "DISAGREE" "NEITHER AGREE OR DISAGREE" "NEITHER AGREE OR DISAGREE" "AGREE" ...\
+ $ q3: chr [1:302] "DISAGREE" "NEITHER AGREE OR DISAGREE" "NEITHER AGREE OR DISAGREE" "NEITHER AGREE OR DISAGREE" ...\
+ $ q4: chr [1:302] "DISAGREE" "DISAGREE" "NEITHER AGREE OR DISAGREE" "NEITHER AGREE OR DISAGREE" ...\
+ $ q5: chr [1:302] "DISAGREE" "STRONGLY DISAGREE" "DISAGREE" "NEITHER AGREE OR DISAGREE" ...\
+ $ q6: chr [1:302] "DISAGREE" "STRONGLY DISAGREE" "DISAGREE" "NEITHER AGREE OR DISAGREE" ...\
+ $ q7: chr [1:302] "DISAGREE" "STRONGLY DISAGREE" "DISAGREE" "NEITHER AGREE OR DISAGREE" ...\
+> bi_scale %>% \
++     mutate(q1 = case_when(\
++         "STRONGLY DISAGREE" ~ "1",\
++         "DISAGREE" ~ "2",\
++         "NEITHER AGREE OR DISAGREE" ~ "3",\
++     )\
++ \
+> bi_scale %>% \
++     mutate(q1 = case_when(\
++         "STRONGLY DISAGREE" ~ "1",\
++         "DISAGREE" ~ "2",\
++         "NEITHER AGREE OR DISAGREE" ~ "3",\
++         "AGREE" ~ "4",\
++         "STRONGLY AGREE" ~ "5",\
++         TRUE ~ q1\
++     )\
++ \
+> bi_scale <- bi_scale %>%\
++   mutate(q1 = case_when(\
++     q1 == "STRONGLY DISAGREE" ~ 1,\
++     q1 == "DISAGREE" ~ 2,\
++     q1 == "NEITHER AGREE OR DISAGREE" ~ 3,\
++     q1 == "AGREE" ~ 4,\
++     q1 == "STRONGLY AGREE" ~ 5,\
++     TRUE ~ q1\
++   ))\
+Error in `mutate()`:\
+\uc0\u8505  In argument: `q1 = case_when(...)`.\
+Caused by error in `case_when()`:\
+! Can't combine `..1 (right)` <double> and `..6 (right)` <character>.\
+Run `rlang::last_trace()` to see where the error occurred.\
+> bi_scale <- bi_scale %>%\
++   mutate(q1 = case_when(\
++     q1 == "STRONGLY DISAGREE" ~ "1",\
++     q1 == "DISAGREE" ~ "2",\
++     q1 == "NEITHER AGREE OR DISAGREE" ~ "3",\
++     q1 == "AGREE" ~ "4",\
++     q1 == "STRONGLY AGREE" ~ "5",\
++     TRUE ~ q1\
++   ))\
+> view(bi_scale)\
+> bi_scale <- bi_scale %>%\
++   mutate(q2 = case_when(\
++     q2 == "STRONGLY DISAGREE" ~ "1",\
++     q2 == "DISAGREE" ~ "2",\
++     q2 == "NEITHER AGREE OR DISAGREE" ~ "3",\
++     q2 == "AGREE" ~ "4",\
++     q2 == "STRONGLY AGREE" ~ "5",\
++     TRUE ~ q2\
++   ))\
+> bi_scale <- bi_scale %>%\
++   mutate(q3 = case_when(\
++     q3 == "STRONGLY DISAGREE" ~ "1",\
++     q3 == "DISAGREE" ~ "2",\
++     q3 == "NEITHER AGREE OR DISAGREE" ~ "3",\
++     q3 == "AGREE" ~ "4",\
++     q3 == "STRONGLY AGREE" ~ "5",\
++     TRUE ~ q3\
++   ))\
+> bi_scale <- bi_scale %>%\
++   mutate(q4 = case_when(\
++     q4 == "STRONGLY DISAGREE" ~ "1",\
++     q4 == "DISAGREE" ~ "2",\
++     q4 == "NEITHER AGREE OR DISAGREE" ~ "3",\
++     q4 == "AGREE" ~ "4",\
++     q4 == "STRONGLY AGREE" ~ "5",\
++     TRUE ~ q4\
++   ))\
+> bi_scale <- bi_scale %>%\
++   mutate(q5 = case_when(\
++     q5 == "STRONGLY DISAGREE" ~ "1",\
++     q5 == "DISAGREE" ~ "2",\
++     q5 == "NEITHER AGREE OR DISAGREE" ~ "3",\
++     q5 == "AGREE" ~ "4",\
++     q5 == "STRONGLY AGREE" ~ "5",\
++     TRUE ~ q5\
++   ))\
+> bi_scale <- bi_scale %>%\
++   mutate(q6 = case_when(\
++     q6 == "STRONGLY DISAGREE" ~ "1",\
++     q6 == "DISAGREE" ~ "2",\
++     q6 == "NEITHER AGREE OR DISAGREE" ~ "3",\
++     q6 == "AGREE" ~ "4",\
++     q6 == "STRONGLY AGREE" ~ "5",\
++     TRUE ~ q6\
++   ))\
+> bi_scale <- bi_scale %>%\
++   mutate(q7 = case_when(\
++     q7 == "STRONGLY DISAGREE" ~ "1",\
++     q7 == "DISAGREE" ~ "2",\
++     q7 == "NEITHER AGREE OR DISAGREE" ~ "3",\
++     q7 == "AGREE" ~ "4",\
++     q7 == "STRONGLY AGREE" ~ "5",\
++     TRUE ~ q7\
++   ))\
+> view(bi_scale)\
+> unique(bi_scale)\
+# A tibble: 192 \'d7 7\
+   q1    q2    q3    q4    q5    q6    q7   \
+   <chr> <chr> <chr> <chr> <chr> <chr> <chr>\
+ 1 4     2     2     2     2     2     2    \
+ 2 5     3     3     2     1     1     1    \
+ 3 4     3     3     3     2     2     2    \
+ 4 4     4     3     3     3     3     3    \
+ 5 4     5     4     5     4     4     5    \
+ 6 4     2     1     2     1     1     1    \
+ 7 5     4     3     4     2     2     1    \
+ 8 4     3     3     2     1     1     1    \
+ 9 4     2     3     1     1     1     1    \
+10 4     4     3     4     3     3     5    \
+# \uc0\u8505  182 more rows\
+# \uc0\u8505  Use `print(n = ...)` to see more rows\
+> unique(bi_scale$q4)\
+[1] "2" "3" "5" "4" "1"\
+> str(bi_scale)\
+tibble [302 \'d7 7] (S3: tbl_df/tbl/data.frame)\
+ $ q1: chr [1:302] "4" "5" "4" "4" ...\
+ $ q2: chr [1:302] "2" "3" "3" "4" ...\
+ $ q3: chr [1:302] "2" "3" "3" "3" ...\
+ $ q4: chr [1:302] "2" "2" "3" "3" ...\
+ $ q5: chr [1:302] "2" "1" "2" "3" ...\
+ $ q6: chr [1:302] "2" "1" "2" "3" ...\
+ $ q7: chr [1:302] "2" "1" "2" "3" ...\
+> bi_scale[] <- lapply(bi_scale, as.numeric)\
+> str(bi_scale)\
+tibble [302 \'d7 7] (S3: tbl_df/tbl/data.frame)\
+ $ q1: num [1:302] 4 5 4 4 4 4 5 4 4 4 ...\
+ $ q2: num [1:302] 2 3 3 4 5 2 4 3 2 2 ...\
+ $ q3: num [1:302] 2 3 3 3 4 1 3 3 2 3 ...\
+ $ q4: num [1:302] 2 2 3 3 5 2 4 2 2 1 ...\
+ $ q5: num [1:302] 2 1 2 3 4 1 2 1 2 1 ...\
+ $ q6: num [1:302] 2 1 2 3 4 1 2 1 2 1 ...\
+ $ q7: num [1:302] 2 1 2 3 5 1 1 1 2 1 ...\
+> library(psych)\
+\
+Attaching package: \'91psych\'92\
+\
+The following objects are masked from \'91package:ggplot2\'92:\
+\
+    %+%, alpha\
+\
+> KMO(cor(bi_scale))\
+Kaiser-Meyer-Olkin factor adequacy\
+Call: KMO(r = cor(bi_scale))\
+Overall MSA =  0.84\
+MSA for each item = \
+  q1   q2   q3   q4   q5   q6   q7 \
+0.92 0.90 0.92 0.86 0.93 0.77 0.75 \
+> desc_stat <- describe(bi_scale)\
+> print(desc_stat)\
+   vars   n mean   sd median trimmed  mad min max range  skew kurtosis   se\
+q1    1 302 3.74 1.21      4    3.91 1.48   1   5     4 -1.02     0.09 0.07\
+q2    2 302 2.94 1.33      3    2.93 1.48   1   5     4 -0.14    -1.29 0.08\
+q3    3 302 2.87 1.39      3    2.84 1.48   1   5     4  0.10    -1.35 0.08\
+q4    4 302 2.72 1.33      2    2.65 1.48   1   5     4  0.23    -1.24 0.08\
+q5    5 302 1.91 1.06      2    1.72 1.48   1   5     4  1.25     0.91 0.06\
+q6    6 302 2.28 1.24      2    2.15 1.48   1   5     4  0.74    -0.57 0.07\
+q7    7 302 2.17 1.21      2    2.02 1.48   1   5     4  0.86    -0.33 0.07\
+> bi_scale$total_score <- rowSums(bi_scale[, c("q1", "q2", "q3", "q4", "q5", "q6", "q7")])\
+> view(bi_scale)\
+> item_total_corr <- cor(bi_scale[, c("q1", "q2", "q3", "q4", "q5", "q6", "q7")], bi_scale$total_score)\
+> print(item_total_corr)\
+        [,1]\
+q1 0.6853954\
+q2 0.8100357\
+q3 0.7301431\
+q4 0.8238115\
+q5 0.6987125\
+q6 0.8762125\
+q7 0.8261575\
+> # Select only the columns with the items (q1 to q7)\
+> item_data <- bi_scale[, c("q1", "q2", "q3", "q4", "q5", "q6", "q7")]\
+> \
+> # Calculate the inter-item correlations\
+> inter_item_corr <- cor(item_data, use = "complete.obs")\
+> \
+> # Print the correlation matrix\
+> print(inter_item_corr)\
+          q1        q2        q3        q4        q5        q6        q7\
+q1 1.0000000 0.5282013 0.3930260 0.5567716 0.3284213 0.4958368 0.4393230\
+q2 0.5282013 1.0000000 0.5814820 0.6381479 0.4639842 0.6199614 0.5435116\
+q3 0.3930260 0.5814820 1.0000000 0.5219883 0.3802707 0.5238290 0.5038214\
+q4 0.5567716 0.6381479 0.5219883 1.0000000 0.5320370 0.6660074 0.5547028\
+q5 0.3284213 0.4639842 0.3802707 0.5320370 1.0000000 0.5974641 0.6029771\
+q6 0.4958368 0.6199614 0.5238290 0.6660074 0.5974641 1.0000000 0.8963494\
+q7 0.4393230 0.5435116 0.5038214 0.5547028 0.6029771 0.8963494 1.0000000\
+> remove(item_data)\
+> remove(inter_item_corr)\
+> print(desc_stat)\
+   vars   n mean   sd median trimmed  mad min max range  skew kurtosis   se\
+q1    1 302 3.74 1.21      4    3.91 1.48   1   5     4 -1.02     0.09 0.07\
+q2    2 302 2.94 1.33      3    2.93 1.48   1   5     4 -0.14    -1.29 0.08\
+q3    3 302 2.87 1.39      3    2.84 1.48   1   5     4  0.10    -1.35 0.08\
+q4    4 302 2.72 1.33      2    2.65 1.48   1   5     4  0.23    -1.24 0.08\
+q5    5 302 1.91 1.06      2    1.72 1.48   1   5     4  1.25     0.91 0.06\
+q6    6 302 2.28 1.24      2    2.15 1.48   1   5     4  0.74    -0.57 0.07\
+q7    7 302 2.17 1.21      2    2.02 1.48   1   5     4  0.86    -0.33 0.07\
+> view(bi_scale)\
+> bi_scale %>% \
++   mutate(-q7)\
+# A tibble: 302 \'d7 9\
+      q1    q2    q3    q4    q5    q6    q7 total_score `-q7`\
+   <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>       <dbl> <dbl>\
+ 1     4     2     2     2     2     2     2          16    -2\
+ 2     5     3     3     2     1     1     1          16    -1\
+ 3     4     3     3     3     2     2     2          19    -2\
+ 4     4     4     3     3     3     3     3          23    -3\
+ 5     4     5     4     5     4     4     5          31    -5\
+ 6     4     2     1     2     1     1     1          12    -1\
+ 7     5     4     3     4     2     2     1          21    -1\
+ 8     4     3     3     2     1     1     1          15    -1\
+ 9     4     2     2     2     2     2     2          16    -2\
+10     4     2     3     1     1     1     1          13    -1\
+# \uc0\u8505  292 more rows\
+# \uc0\u8505  Use `print(n = ...)` to see more rows\
+> bi_scale %>% \
++   select(-q7) %>% \
++   view()\
+> # since there is an overloading amongst q6 and q7, we remove q7\
+> bi_scale <- bi_scale %>% \
++   select(-q7)\
+> view(bi_scale)\
+> # now we find the rowSum value again for total of all responses\
+> bi_scale$total_score <- rowSums(bi_scale[, c("q1", "q2", "q3", "q4", "q5", "q6")])\
+> view(bi_scale)\
+> # now we calculate the NEW item total correlation\
+> item_total_corr <- cor(bi_scale[, c("q1", "q2", "q3", "q4", "q5", "q6")], bi_scale$total_score)\
+> print(item_total_corr)\
+        [,1]\
+q1 0.7069130\
+q2 0.8304598\
+q3 0.7456855\
+q4 0.8441816\
+q5 0.6886859\
+q6 0.8347518\
+> # step 1\
+> item_data2 <- bi_scale[, c("q1", "q2", "q3", "q4", "q5", "q6")]\
+> # step 2\
+> inter_item_corr2 <- cor(item_data) # we dont need complete.obs as we know there are no NA values\
+Error: object 'item_data' not found\
+> #step 3\
+> print(inter_item_corr2)\
+Error: object 'inter_item_corr2' not found\
+> # step 1\
+> item_data2 <- bi_scale[, c("q1", "q2", "q3", "q4", "q5", "q6")]\
+> # step 2\
+> inter_item_corr2 <- cor(item_data) # we dont need complete.obs as we know there are no NA values\
+Error: object 'item_data' not found\
+> # step 2\
+> inter_item_corr2 <- cor(item_data2) # we dont need complete.obs as we know there are no NA values\
+> #step 3\
+> print(inter_item_corr2)\
+          q1        q2        q3        q4        q5        q6\
+q1 1.0000000 0.5282013 0.3930260 0.5567716 0.3284213 0.4958368\
+q2 0.5282013 1.0000000 0.5814820 0.6381479 0.4639842 0.6199614\
+q3 0.3930260 0.5814820 1.0000000 0.5219883 0.3802707 0.5238290\
+q4 0.5567716 0.6381479 0.5219883 1.0000000 0.5320370 0.6660074\
+q5 0.3284213 0.4639842 0.3802707 0.5320370 1.0000000 0.5974641\
+q6 0.4958368 0.6199614 0.5238290 0.6660074 0.5974641 1.0000000\
+> print(item_total_corr)\
+        [,1]\
+q1 0.7069130\
+q2 0.8304598\
+q3 0.7456855\
+q4 0.8441816\
+q5 0.6886859\
+q6 0.8347518\
+> view(item_data2)\
+> ?alpha\
+> ??alpha\
+> ??psych::alpha\
+> cronbach_alpha <- psych::alpha(item_data2)\
+> print(cronbach_alpha)\
+\
+Reliability analysis   \
+Call: psych::alpha(x = item_data2)\
+\
+  raw_alpha std.alpha G6(smc) average_r S/N   ase mean   sd median_r\
+      0.87      0.87    0.86      0.52 6.5 0.012  2.7 0.98     0.53\
+\
+    95% confidence boundaries \
+         lower alpha upper\
+Feldt     0.84  0.87  0.89\
+Duhachek  0.84  0.87  0.89\
+\
+ Reliability if an item is dropped:\
+   raw_alpha std.alpha G6(smc) average_r S/N alpha se  var.r med.r\
+q1      0.86      0.86    0.84      0.55 6.2    0.013 0.0075  0.56\
+q2      0.83      0.83    0.81      0.50 5.0    0.015 0.0108  0.52\
+q3      0.86      0.86    0.84      0.54 5.9    0.013 0.0098  0.54\
+q4      0.83      0.83    0.81      0.49 4.8    0.015 0.0097  0.51\
+q5      0.86      0.86    0.84      0.55 6.2    0.013 0.0063  0.54\
+q6      0.83      0.83    0.81      0.49 4.9    0.015 0.0097  0.53\
+\
+ Item statistics \
+     n raw.r std.r r.cor r.drop mean  sd\
+q1 302  0.71  0.71  0.62   0.58  3.7 1.2\
+q2 302  0.83  0.82  0.79   0.74  2.9 1.3\
+q3 302  0.75  0.73  0.65   0.61  2.9 1.4\
+q4 302  0.84  0.84  0.81   0.76  2.7 1.3\
+q5 302  0.69  0.71  0.63   0.57  1.9 1.1\
+q6 302  0.83  0.84  0.81   0.75  2.3 1.2\
+\
+Non missing response frequency for each item\
+      1    2    3    4    5 miss\
+q1 0.09 0.09 0.09 0.46 0.27    0\
+q2 0.20 0.20 0.16 0.33 0.11    0\
+q3 0.21 0.26 0.13 0.25 0.15    0\
+q4 0.22 0.30 0.13 0.25 0.11    0\
+q5 0.43 0.37 0.08 0.08 0.03    0\
+q6 0.32 0.35 0.12 0.15 0.07    0\
+> # Now we conduct EFA (Exploratory Factor Analysis to identify latent constructs)\
+> kmo_result <- psych::KMO(item_data2)\
+> print(kmo_result)\
+Kaiser-Meyer-Olkin factor adequacy\
+Call: psych::KMO(r = item_data2)\
+Overall MSA =  0.88\
+MSA for each item = \
+  q1   q2   q3   q4   q5   q6 \
+0.90 0.88 0.90 0.87 0.87 0.86 \
+> # Then we conduct Bartlett's Test of Sphericity\
+> install.packages("REdaS") #pre-requisite to conducting Bartlett's Test\
+trying URL 'https://cran.rstudio.com/bin/macosx/big-sur-arm64/contrib/4.4/REdaS_0.9.4.tgz'\
+Content type 'application/x-gzip' length 84423 bytes (82 KB)\
+==================================================\
+downloaded 82 KB\
+\
+\
+The downloaded binary packages are in\
+	/var/folders/4g/cczjcgdj5qn2643tg90rqd0h0000gn/T//Rtmp9LXeBW/downloaded_packages\
+> library(REdaS) # "Reliability and Exploratory Data Analysis for the Social Sciences\
+Loading required package: grid\
+> library(REdaS) # "Reliability and Exploratory Data Analysis for the Social Sciences"\
+> # Then we conduct Bartlett's Test of Sphericity\
+> bartlett_test <- bart_spher(item_data2)\
+> print(bartlett_test)\
+\
+	Bartlett's Test of Sphericity\
+\
+Call: bart_spher(x = item_data2)\
+\
+     X2 = 804.224\
+     df = 15\
+p-value < 2.22e-16\
+\
+> view(item_data2)\
+> scree(item_data2)\
+> hist(bi_scale$q1)\
+> hist(bi_scale$q2)\
+> hist(bi_scale$q3)\
+> hist(bi_scale$q4)\
+> hist(bi_scale$q5)\
+> hist(bi_scale$q6)\
+> # For item q1\
+> hist(bi_scale$q1, main = "Histogram of q1", col = "lightblue", breaks = 10)\
+> \
+> # now we conduct Exploratory Factor Analysis (EFA)\
+> efa_result <- fa(item_data2, nfactors = 1, rotate = "varimax", fm = "ml")\
+> print(efa_result)\
+Factor Analysis using method =  ml\
+Call: fa(r = item_data2, nfactors = 1, rotate = "varimax", fm = "ml")\
+Standardized loadings (pattern matrix) based upon correlation matrix\
+    ML1   h2   u2 com\
+q1 0.63 0.40 0.60   1\
+q2 0.79 0.62 0.38   1\
+q3 0.66 0.43 0.57   1\
+q4 0.82 0.68 0.32   1\
+q5 0.64 0.41 0.59   1\
+q6 0.81 0.66 0.34   1\
+\
+                ML1\
+SS loadings    3.20\
+Proportion Var 0.53\
+\
+Mean item complexity =  1\
+Test of the hypothesis that 1 factor is sufficient.\
+\
+df null model =  15  with the objective function =  2.7 with Chi Square =  804.22\
+df of  the model are 9  and the objective function was  0.09 \
+\
+The root mean square of the residuals (RMSR) is  0.04 \
+The df corrected root mean square of the residuals is  0.05 \
+\
+The harmonic n.obs is  302 with the empirical chi square  13.97  with prob <  0.12 \
+The total n.obs was  302  with Likelihood Chi Square =  28.04  with prob <  0.00094 \
+\
+Tucker Lewis Index of factoring reliability =  0.96\
+RMSEA index =  0.084  and the 90 % confidence intervals are  0.05 0.12\
+BIC =  -23.35\
+Fit based upon off diagonal values = 0.99\
+Measures of factor score adequacy             \
+                                                   ML1\
+Correlation of (regression) scores with factors   0.94\
+Multiple R square of scores with factors          0.89\
+Minimum correlation of possible factor scores     0.77\
+> # now we conduct Exploratory Factor Analysis (EFA)\
+> efa_result <- fa(item_data2, nfactors = 1, rotate = "oblimin", fm = "ml")\
+> print(efa_result)\
+Factor Analysis using method =  ml\
+Call: fa(r = item_data2, nfactors = 1, rotate = "oblimin", fm = "ml")\
+Standardized loadings (pattern matrix) based upon correlation matrix\
+    ML1   h2   u2 com\
+q1 0.63 0.40 0.60   1\
+q2 0.79 0.62 0.38   1\
+q3 0.66 0.43 0.57   1\
+q4 0.82 0.68 0.32   1\
+q5 0.64 0.41 0.59   1\
+q6 0.81 0.66 0.34   1\
+\
+                ML1\
+SS loadings    3.20\
+Proportion Var 0.53\
+\
+Mean item complexity =  1\
+Test of the hypothesis that 1 factor is sufficient.\
+\
+df null model =  15  with the objective function =  2.7 with Chi Square =  804.22\
+df of  the model are 9  and the objective function was  0.09 \
+\
+The root mean square of the residuals (RMSR) is  0.04 \
+The df corrected root mean square of the residuals is  0.05 \
+\
+The harmonic n.obs is  302 with the empirical chi square  13.97  with prob <  0.12 \
+The total n.obs was  302  with Likelihood Chi Square =  28.04  with prob <  0.00094 \
+\
+Tucker Lewis Index of factoring reliability =  0.96\
+RMSEA index =  0.084  and the 90 % confidence intervals are  0.05 0.12\
+BIC =  -23.35\
+Fit based upon off diagonal values = 0.99\
+Measures of factor score adequacy             \
+                                                   ML1\
+Correlation of (regression) scores with factors   0.94\
+Multiple R square of scores with factors          0.89\
+Minimum correlation of possible factor scores     0.77\
+> # now we conduct Exploratory Factor Analysis (EFA)\
+> efa_result <- fa(item_data2, nfactors = 1, rotate = "oblimin", fm = "pa")\
+> print(efa_result)\
+Factor Analysis using method =  pa\
+Call: fa(r = item_data2, nfactors = 1, rotate = "oblimin", fm = "pa")\
+Standardized loadings (pattern matrix) based upon correlation matrix\
+    PA1   h2   u2 com\
+q1 0.62 0.39 0.61   1\
+q2 0.79 0.63 0.37   1\
+q3 0.65 0.43 0.57   1\
+q4 0.83 0.68 0.32   1\
+q5 0.63 0.39 0.61   1\
+q6 0.82 0.67 0.33   1\
+\
+                PA1\
+SS loadings    3.19\
+Proportion Var 0.53\
+\
+Mean item complexity =  1\
+Test of the hypothesis that 1 factor is sufficient.\
+\
+df null model =  15  with the objective function =  2.7 with Chi Square =  804.22\
+df of  the model are 9  and the objective function was  0.1 \
+\
+The root mean square of the residuals (RMSR) is  0.04 \
+The df corrected root mean square of the residuals is  0.05 \
+\
+The harmonic n.obs is  302 with the empirical chi square  13.37  with prob <  0.15 \
+The total n.obs was  302  with Likelihood Chi Square =  28.61  with prob <  0.00075 \
+\
+Tucker Lewis Index of factoring reliability =  0.958\
+RMSEA index =  0.085  and the 90 % confidence intervals are  0.051 0.121\
+BIC =  -22.78\
+Fit based upon off diagonal values = 0.99\
+Measures of factor score adequacy             \
+                                                   PA1\
+Correlation of (regression) scores with factors   0.94\
+Multiple R square of scores with factors          0.89\
+Minimum correlation of possible factor scores     0.78\
+> # now we conduct Exploratory Factor Analysis (EFA)\
+> efa_result <- fa(item_data2, nfactors = 2, rotate = "oblimin", fm = "pa")\
+Loading required namespace: GPArotation\
+> print(efa_result)\
+Factor Analysis using method =  pa\
+Call: fa(r = item_data2, nfactors = 2, rotate = "oblimin", fm = "pa")\
+Standardized loadings (pattern matrix) based upon correlation matrix\
+    PA1   PA2   h2   u2 com\
+q1 0.71 -0.08 0.42 0.58 1.0\
+q2 0.86 -0.05 0.68 0.32 1.0\
+q3 0.65  0.01 0.44 0.56 1.0\
+q4 0.67  0.19 0.67 0.33 1.2\
+q5 0.01  0.77 0.60 0.40 1.0\
+q6 0.46  0.43 0.69 0.31 2.0\
+\
+                       PA1  PA2\
+SS loadings           2.50 1.00\
+Proportion Var        0.42 0.17\
+Cumulative Var        0.42 0.58\
+Proportion Explained  0.72 0.28\
+Cumulative Proportion 0.72 1.00\
+\
+ With factor correlations of \
+     PA1  PA2\
+PA1 1.00 0.73\
+PA2 0.73 1.00\
+\
+Mean item complexity =  1.2\
+Test of the hypothesis that 2 factors are sufficient.\
+\
+df null model =  15  with the objective function =  2.7 with Chi Square =  804.22\
+df of  the model are 4  and the objective function was  0.03 \
+\
+The root mean square of the residuals (RMSR) is  0.02 \
+The df corrected root mean square of the residuals is  0.04 \
+\
+The harmonic n.obs is  302 with the empirical chi square  3.33  with prob <  0.5 \
+The total n.obs was  302  with Likelihood Chi Square =  8.11  with prob <  0.088 \
+\
+Tucker Lewis Index of factoring reliability =  0.98\
+RMSEA index =  0.058  and the 90 % confidence intervals are  0 0.117\
+BIC =  -14.73\
+Fit based upon off diagonal values = 1\
+Measures of factor score adequacy             \
+                                                   PA1  PA2\
+Correlation of (regression) scores with factors   0.94 0.88\
+Multiple R square of scores with factors          0.88 0.77\
+Minimum correlation of possible factor scores     0.75 0.53\
+> # now we conduct Exploratory Factor Analysis (EFA)\
+> efa_result <- fa(item_data2, nfactors = 1, rotate = "oblimin", fm = "pa")\
+> print(efa_result)\
+Factor Analysis using method =  pa\
+Call: fa(r = item_data2, nfactors = 1, rotate = "oblimin", fm = "pa")\
+Standardized loadings (pattern matrix) based upon correlation matrix\
+    PA1   h2   u2 com\
+q1 0.62 0.39 0.61   1\
+q2 0.79 0.63 0.37   1\
+q3 0.65 0.43 0.57   1\
+q4 0.83 0.68 0.32   1\
+q5 0.63 0.39 0.61   1\
+q6 0.82 0.67 0.33   1\
+\
+                PA1\
+SS loadings    3.19\
+Proportion Var 0.53\
+\
+Mean item complexity =  1\
+Test of the hypothesis that 1 factor is sufficient.\
+\
+df null model =  15  with the objective function =  2.7 with Chi Square =  804.22\
+df of  the model are 9  and the objective function was  0.1 \
+\
+The root mean square of the residuals (RMSR) is  0.04 \
+The df corrected root mean square of the residuals is  0.05 \
+\
+The harmonic n.obs is  302 with the empirical chi square  13.37  with prob <  0.15 \
+The total n.obs was  302  with Likelihood Chi Square =  28.61  with prob <  0.00075 \
+\
+Tucker Lewis Index of factoring reliability =  0.958\
+RMSEA index =  0.085  and the 90 % confidence intervals are  0.051 0.121\
+BIC =  -22.78\
+Fit based upon off diagonal values = 0.99\
+Measures of factor score adequacy             \
+                                                   PA1\
+Correlation of (regression) scores with factors   0.94\
+Multiple R square of scores with factors          0.89\
+Minimum correlation of possible factor scores     0.78\
+> view(item_data)\
+Error: object 'item_data' not found\
+> # step 1: select only the columns with the items (q1 to q7)\
+> item_data <- bi_scale[, c("q1", "q2", "q3", "q4", "q5", "q6", "q7")]\
+Error in `bi_scale[, c("q1", "q2", "q3", "q4", "q5", "q6", "q7")]`:\
+! Can't subset columns that don't exist.\
+\uc0\u10006  Column `q7` doesn't exist.\
+Run `rlang::last_trace()` to see where the error occurred.\
+> # now we conduct Exploratory Factor Analysis (EFA)\
+> efa_result <- fa(item_data2, nfactors = 1, rotate = "oblimin", fm = "pa")\
+> print(efa_result)\
+Factor Analysis using method =  pa\
+Call: fa(r = item_data2, nfactors = 1, rotate = "oblimin", fm = "pa")\
+Standardized loadings (pattern matrix) based upon correlation matrix\
+    PA1   h2   u2 com\
+q1 0.62 0.39 0.61   1\
+q2 0.79 0.63 0.37   1\
+q3 0.65 0.43 0.57   1\
+q4 0.83 0.68 0.32   1\
+q5 0.63 0.39 0.61   1\
+q6 0.82 0.67 0.33   1\
+\
+                PA1\
+SS loadings    3.19\
+Proportion Var 0.53\
+\
+Mean item complexity =  1\
+Test of the hypothesis that 1 factor is sufficient.\
+\
+df null model =  15  with the objective function =  2.7 with Chi Square =  804.22\
+df of  the model are 9  and the objective function was  0.1 \
+\
+The root mean square of the residuals (RMSR) is  0.04 \
+The df corrected root mean square of the residuals is  0.05 \
+\
+The harmonic n.obs is  302 with the empirical chi square  13.37  with prob <  0.15 \
+The total n.obs was  302  with Likelihood Chi Square =  28.61  with prob <  0.00075 \
+\
+Tucker Lewis Index of factoring reliability =  0.958\
+RMSEA index =  0.085  and the 90 % confidence intervals are  0.051 0.121\
+BIC =  -22.78\
+Fit based upon off diagonal values = 0.99\
+Measures of factor score adequacy             \
+                                                   PA1\
+Correlation of (regression) scores with factors   0.94\
+Multiple R square of scores with factors          0.89\
+Minimum correlation of possible factor scores     0.78\
+> print(efa_result, digits = 3, cut = 0.3)\
+Factor Analysis using method =  pa\
+Call: fa(r = item_data2, nfactors = 1, rotate = "oblimin", fm = "pa")\
+Standardized loadings (pattern matrix) based upon correlation matrix\
+     PA1    h2    u2 com\
+q1 0.624 0.389 0.611   1\
+q2 0.794 0.631 0.369   1\
+q3 0.653 0.426 0.574   1\
+q4 0.826 0.682 0.318   1\
+q5 0.625 0.391 0.609   1\
+q6 0.820 0.673 0.327   1\
+\
+                 PA1\
+SS loadings    3.192\
+Proportion Var 0.532\
+\
+Mean item complexity =  1\
+Test of the hypothesis that 1 factor is sufficient.\
+\
+df null model =  15  with the objective function =  2.697 with Chi Square =  804.224\
+df of  the model are 9  and the objective function was  0.096 \
+\
+The root mean square of the residuals (RMSR) is  0.038 \
+The df corrected root mean square of the residuals is  0.05 \
+\
+The harmonic n.obs is  302 with the empirical chi square  13.368  with prob <  0.147 \
+The total n.obs was  302  with Likelihood Chi Square =  28.615  with prob <  0.000752 \
+\
+Tucker Lewis Index of factoring reliability =  0.9585\
+RMSEA index =  0.0849  and the 90 % confidence intervals are  0.0512 0.1211\
+BIC =  -22.779\
+Fit based upon off diagonal values = 0.995\
+Measures of factor score adequacy             \
+                                                    PA1\
+Correlation of (regression) scores with factors   0.944\
+Multiple R square of scores with factors          0.890\
+Minimum correlation of possible factor scores     0.780\
+> print(efa_result)\
+Factor Analysis using method =  pa\
+Call: fa(r = item_data2, nfactors = 1, rotate = "oblimin", fm = "pa")\
+Standardized loadings (pattern matrix) based upon correlation matrix\
+    PA1   h2   u2 com\
+q1 0.62 0.39 0.61   1\
+q2 0.79 0.63 0.37   1\
+q3 0.65 0.43 0.57   1\
+q4 0.83 0.68 0.32   1\
+q5 0.63 0.39 0.61   1\
+q6 0.82 0.67 0.33   1\
+\
+                PA1\
+SS loadings    3.19\
+Proportion Var 0.53\
+\
+Mean item complexity =  1\
+Test of the hypothesis that 1 factor is sufficient.\
+\
+df null model =  15  with the objective function =  2.7 with Chi Square =  804.22\
+df of  the model are 9  and the objective function was  0.1 \
+\
+The root mean square of the residuals (RMSR) is  0.04 \
+The df corrected root mean square of the residuals is  0.05 \
+\
+The harmonic n.obs is  302 with the empirical chi square  13.37  with prob <  0.15 \
+The total n.obs was  302  with Likelihood Chi Square =  28.61  with prob <  0.00075 \
+\
+Tucker Lewis Index of factoring reliability =  0.958\
+RMSEA index =  0.085  and the 90 % confidence intervals are  0.051 0.121\
+BIC =  -22.78\
+Fit based upon off diagonal values = 0.99\
+Measures of factor score adequacy             \
+                                                   PA1\
+Correlation of (regression) scores with factors   0.94\
+Multiple R square of scores with factors          0.89\
+Minimum correlation of possible factor scores     0.78\
+> print(efa_result)\
+Factor Analysis using method =  pa\
+Call: fa(r = item_data2, nfactors = 1, rotate = "oblimin", fm = "pa")\
+Standardized loadings (pattern matrix) based upon correlation matrix\
+    PA1   h2   u2 com\
+q1 0.62 0.39 0.61   1\
+q2 0.79 0.63 0.37   1\
+q3 0.65 0.43 0.57   1\
+q4 0.83 0.68 0.32   1\
+q5 0.63 0.39 0.61   1\
+q6 0.82 0.67 0.33   1\
+\
+                PA1\
+SS loadings    3.19\
+Proportion Var 0.53\
+\
+Mean item complexity =  1\
+Test of the hypothesis that 1 factor is sufficient.\
+\
+df null model =  15  with the objective function =  2.7 with Chi Square =  804.22\
+df of  the model are 9  and the objective function was  0.1 \
+\
+The root mean square of the residuals (RMSR) is  0.04 \
+The df corrected root mean square of the residuals is  0.05 \
+\
+The harmonic n.obs is  302 with the empirical chi square  13.37  with prob <  0.15 \
+The total n.obs was  302  with Likelihood Chi Square =  28.61  with prob <  0.00075 \
+\
+Tucker Lewis Index of factoring reliability =  0.958\
+RMSEA index =  0.085  and the 90 % confidence intervals are  0.051 0.121\
+BIC =  -22.78\
+Fit based upon off diagonal values = 0.99\
+Measures of factor score adequacy             \
+                                                   PA1\
+Correlation of (regression) scores with factors   0.94\
+Multiple R square of scores with factors          0.89\
+Minimum correlation of possible factor scores     0.78\
+Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\
+In addition: Warning message:\
+In readChar(con, 5L, useBytes = TRUE) :\
+  cannot open compressed file '/var/folders/4g/cczjcgdj5qn2643tg90rqd0h0000gn/T/Rtmp9LXeBW/rs-graphics-ff908a3f-114c-4488-a6d5-a0b5e4ac14d0/270c0b6d-4301-45ae-a04f-a85f42100017.snapshot', probable reason 'No such file or directory'\
+Graphics error: Plot rendering error\
+Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\
+In addition: Warning message:\
+In readChar(con, 5L, useBytes = TRUE) :\
+  cannot open compressed file '/var/folders/4g/cczjcgdj5qn2643tg90rqd0h0000gn/T/Rtmp9LXeBW/rs-graphics-ff908a3f-114c-4488-a6d5-a0b5e4ac14d0/8e9a30ca-acf5-4500-9143-bdc030082999.snapshot', probable reason 'No such file or directory'\
+Graphics error: Plot rendering error\
+Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\
+In addition: Warning message:\
+In readChar(con, 5L, useBytes = TRUE) :\
+  cannot open compressed file '/var/folders/4g/cczjcgdj5qn2643tg90rqd0h0000gn/T/Rtmp9LXeBW/rs-graphics-ff908a3f-114c-4488-a6d5-a0b5e4ac14d0/2a91a921-1633-436d-9ba7-aea48c4f3ac6.snapshot', probable reason 'No such file or directory'\
+Graphics error: Plot rendering error\
+Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\
+In addition: Warning message:\
+In readChar(con, 5L, useBytes = TRUE) :\
+  cannot open compressed file '/var/folders/4g/cczjcgdj5qn2643tg90rqd0h0000gn/T/Rtmp9LXeBW/rs-graphics-ff908a3f-114c-4488-a6d5-a0b5e4ac14d0/a5f52a47-273d-4dba-86d3-d20bbb99f5b1.snapshot', probable reason 'No such file or directory'\
+Graphics error: Plot rendering error\
+Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\
+In addition: Warning message:\
+In readChar(con, 5L, useBytes = TRUE) :\
+  cannot open compressed file '/var/folders/4g/cczjcgdj5qn2643tg90rqd0h0000gn/T/Rtmp9LXeBW/rs-graphics-ff908a3f-114c-4488-a6d5-a0b5e4ac14d0/e4008b92-036b-4ea7-a4dd-0197f64c1688.snapshot', probable reason 'No such file or directory'\
+Graphics error: Plot rendering error\
+Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\
+In addition: Warning message:\
+In readChar(con, 5L, useBytes = TRUE) :\
+  cannot open compressed file '/var/folders/4g/cczjcgdj5qn2643tg90rqd0h0000gn/T/Rtmp9LXeBW/rs-graphics-ff908a3f-114c-4488-a6d5-a0b5e4ac14d0/d083adf3-30f1-47b5-b0e5-110b8b557c83.snapshot', probable reason 'No such file or directory'\
+Graphics error: Plot rendering error\
+> print(efa_result)\
+Factor Analysis using method =  pa\
+Call: fa(r = item_data2, nfactors = 1, rotate = "oblimin", fm = "pa")\
+Standardized loadings (pattern matrix) based upon correlation matrix\
+    PA1   h2   u2 com\
+q1 0.62 0.39 0.61   1\
+q2 0.79 0.63 0.37   1\
+q3 0.65 0.43 0.57   1\
+q4 0.83 0.68 0.32   1\
+q5 0.63 0.39 0.61   1\
+q6 0.82 0.67 0.33   1\
+\
+                PA1\
+SS loadings    3.19\
+Proportion Var 0.53\
+\
+Mean item complexity =  1\
+Test of the hypothesis that 1 factor is sufficient.\
+\
+df null model =  15  with the objective function =  2.7 with Chi Square =  804.22\
+df of  the model are 9  and the objective function was  0.1 \
+\
+The root mean square of the residuals (RMSR) is  0.04 \
+The df corrected root mean square of the residuals is  0.05 \
+\
+The harmonic n.obs is  302 with the empirical chi square  13.37  with prob <  0.15 \
+The total n.obs was  302  with Likelihood Chi Square =  28.61  with prob <  0.00075 \
+\
+Tucker Lewis Index of factoring reliability =  0.958\
+RMSEA index =  0.085  and the 90 % confidence intervals are  0.051 0.121\
+BIC =  -22.78\
+Fit based upon off diagonal values = 0.99\
+Measures of factor score adequacy             \
+                                                   PA1\
+Correlation of (regression) scores with factors   0.94\
+Multiple R square of scores with factors          0.89\
+Minimum correlation of possible factor scores     0.78\
+> \
+> \
+> \
+> \
+> install.packages("lavaan") # for latent variable analysis\
+also installing the dependencies \'91pbivnorm\'92, \'91numDeriv\'92, \'91quadprog\'92\
+\
+trying URL 'https://cran.rstudio.com/bin/macosx/big-sur-arm64/contrib/4.4/pbivnorm_0.6.0.tgz'\
+Content type 'application/x-gzip' length 26894 bytes (26 KB)\
+==================================================\
+downloaded 26 KB\
+\
+trying URL 'https://cran.rstudio.com/bin/macosx/big-sur-arm64/contrib/4.4/numDeriv_2016.8-1.1.tgz'\
+Content type 'application/x-gzip' length 114048 bytes (111 KB)\
+==================================================\
+downloaded 111 KB\
+\
+trying URL 'https://cran.rstudio.com/bin/macosx/big-sur-arm64/contrib/4.4/quadprog_1.5-8.tgz'\
+Content type 'application/x-gzip' length 40364 bytes (39 KB)\
+==================================================\
+downloaded 39 KB\
+\
+trying URL 'https://cran.rstudio.com/bin/macosx/big-sur-arm64/contrib/4.4/lavaan_0.6-19.tgz'\
+Content type 'application/x-gzip' length 3841602 bytes (3.7 MB)\
+==================================================\
+downloaded 3.7 MB\
+\
+\
+The downloaded binary packages are in\
+	/var/folders/4g/cczjcgdj5qn2643tg90rqd0h0000gn/T//Rtmp9LXeBW/downloaded_packages\
+> library(lavaan)\
+This is lavaan 0.6-19\
+lavaan is FREE software! Please report any bugs.\
+\
+Attaching package: \'91lavaan\'92\
+\
+The following object is masked from \'91package:psych\'92:\
+\
+    cor2cov\
+\
+> cfa_model <- 'Factor1 =~ q1 + q2 + q3 + q4 + q5 + q6'\
+> cfa_result <- cfa(cfa_model, data = item_data2) \
+> summary(cfa_result)\
+lavaan 0.6-19 ended normally after 22 iterations\
+\
+  Estimator                                         ML\
+  Optimization method                           NLMINB\
+  Number of model parameters                        12\
+\
+  Number of observations                           302\
+\
+Model Test User Model:\
+                                                      \
+  Test statistic                                28.467\
+  Degrees of freedom                                 9\
+  P-value (Chi-square)                           0.001\
+\
+Parameter Estimates:\
+\
+  Standard errors                             Standard\
+  Information                                 Expected\
+  Information saturated (h1) model          Structured\
+\
+Latent Variables:\
+                   Estimate  Std.Err  z-value  P(>|z|)\
+  Factor1 =~                                          \
+    q1                1.000                           \
+    q2                1.368    0.124   11.029    0.000\
+    q3                1.198    0.124    9.622    0.000\
+    q4                1.432    0.126   11.376    0.000\
+    q5                0.888    0.094    9.420    0.000\
+    q6                1.323    0.117   11.305    0.000\
+\
+Variances:\
+                   Estimate  Std.Err  z-value  P(>|z|)\
+   .q1                0.870    0.078   11.219    0.000\
+   .q2                0.676    0.070    9.665    0.000\
+   .q3                1.104    0.100   11.078    0.000\
+   .q4                0.571    0.064    8.876    0.000\
+   .q5                0.665    0.059   11.184    0.000\
+   .q6                0.517    0.057    9.069    0.000\
+    Factor1           0.582    0.100    5.833    0.000\
+\
+> summary(cfa_result, fit.measures = TRUE, standardized = TRUE)\
+lavaan 0.6-19 ended normally after 22 iterations\
+\
+  Estimator                                         ML\
+  Optimization method                           NLMINB\
+  Number of model parameters                        12\
+\
+  Number of observations                           302\
+\
+Model Test User Model:\
+                                                      \
+  Test statistic                                28.467\
+  Degrees of freedom                                 9\
+  P-value (Chi-square)                           0.001\
+\
+Model Test Baseline Model:\
+\
+  Test statistic                               814.563\
+  Degrees of freedom                                15\
+  P-value                                        0.000\
+\
+User Model versus Baseline Model:\
+\
+  Comparative Fit Index (CFI)                    0.976\
+  Tucker-Lewis Index (TLI)                       0.959\
+\
+Loglikelihood and Information Criteria:\
+\
+  Loglikelihood user model (H0)              -2587.980\
+  Loglikelihood unrestricted model (H1)      -2573.747\
+                                                      \
+  Akaike (AIC)                                5199.961\
+  Bayesian (BIC)                              5244.486\
+  Sample-size adjusted Bayesian (SABIC)       5206.429\
+\
+Root Mean Square Error of Approximation:\
+\
+  RMSEA                                          0.085\
+  90 Percent confidence interval - lower         0.051\
+  90 Percent confidence interval - upper         0.121\
+  P-value H_0: RMSEA <= 0.050                    0.047\
+  P-value H_0: RMSEA >= 0.080                    0.624\
+\
+Standardized Root Mean Square Residual:\
+\
+  SRMR                                           0.033\
+\
+Parameter Estimates:\
+\
+  Standard errors                             Standard\
+  Information                                 Expected\
+  Information saturated (h1) model          Structured\
+\
+Latent Variables:\
+                   Estimate  Std.Err  z-value  P(>|z|)   Std.lv  Std.all\
+  Factor1 =~                                                            \
+    q1                1.000                               0.763    0.633\
+    q2                1.368    0.124   11.029    0.000    1.044    0.786\
+    q3                1.198    0.124    9.622    0.000    0.913    0.656\
+    q4                1.432    0.126   11.376    0.000    1.092    0.822\
+    q5                0.888    0.094    9.420    0.000    0.677    0.639\
+    q6                1.323    0.117   11.305    0.000    1.009    0.814\
+\
+Variances:\
+                   Estimate  Std.Err  z-value  P(>|z|)   Std.lv  Std.all\
+   .q1                0.870    0.078   11.219    0.000    0.870    0.599\
+   .q2                0.676    0.070    9.665    0.000    0.676    0.383\
+   .q3                1.104    0.100   11.078    0.000    1.104    0.570\
+   .q4                0.571    0.064    8.876    0.000    0.571    0.324\
+   .q5                0.665    0.059   11.184    0.000    0.665    0.592\
+   .q6                0.517    0.057    9.069    0.000    0.517    0.337\
+    Factor1           0.582    0.100    5.833    0.000    1.000    1.000}
